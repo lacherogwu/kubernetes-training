@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  api:
+    container_name: api
+    image: node-api
+    build: api
+    ports:
+      - 3000:3000
+    restart: always
+    volumes:
+      - ./api:/app
+    command: ['npm', 'run', 'dev']
+    depends_on:
+      - redis
+  processor:
+    container_name: processor
+    image: node-processor
+    build: processor
+    restart: always
+    volumes:
+      - ./processor:/app
+    command: ['npm', 'run', 'dev']
+    depends_on:
+      - redis
+  redis:
+    image: redis
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
+    volumes:
+      - data:/data
+  # redis-commander:
+  #   container_name: redis-commander
+  #   image: rediscommander/redis-commander
+  #   restart: always
+  #   environment:
+  #     - REDIS_HOSTS=local:redis:6379
+  #   ports:
+  #     - 8081:8081
+  #   depends_on:
+  #     - redis
+
+volumes:
+  data:
